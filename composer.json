@@ -4,8 +4,8 @@
     "description": "A Flow package that transparently imports missing resources from a remote source",
     "license": "MIT",
     "require": {
-        "php": "^7.4",
-        "neos/flow": "^6.0"
+        "php": "^7.4 || ^8.0",
+        "neos/flow": "^6.0 || ^7.0"
     },
     "autoload": {
         "psr-4": {
