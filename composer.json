@@ -2,6 +2,7 @@
     "name": "flownative/flow-resourceproxy",
     "type": "neos-package",
     "description": "A Flow package that transparently imports missing resources from a remote source",
+    "license": "MIT",
     "require": {
         "php": "^7.4",
         "neos/flow": "^6.0"
