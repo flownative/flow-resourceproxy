@@ -7,10 +7,10 @@
 
 ## Description
 
-This [Flow](https://flow.neos.io) allows to transparently import resource data
-from other systems  into Flow. It does this by providing an implementation that
-tries to fetch  missing resources from a remote source. When a resource can be
-fetched, it is "imported" and available as usual, otherwise the system behaves
+This [Flow](https://flow.neos.io) package allows to transparently import resource
+data from other systems  into Flow. It does this by providing an implementation
+that tries to fetch  missing resources from a remote source. When a resource can
+be fetched, it is "imported" and available as usual, otherwise the system behaves
 as usual when a resource is missing.
 
 Because [Neos CMS](https://www.neos.io) is using Flow's resource management under
