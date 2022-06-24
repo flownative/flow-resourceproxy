@@ -49,7 +49,7 @@ After setting up the configuration, clear the Fusion cache to make sure the URIs
 will be fetched again and can be checked for needing an import. Similarly,
 clearing the existing thumbnails will force the system to re-generate them.
 
-## Trubleshooting
+## Troubleshooting
 
 If things don't work as expected, check the system log, the package is pretty
 talkative in the debug log level.
