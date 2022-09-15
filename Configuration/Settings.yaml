@@ -1,7 +1,6 @@
 Flownative:
   Flow:
     ResourceProxy:
-      storages: []
 #      storages:
 #        # the default storage for a Flow setup
 #        'defaultPersistentResourcesStorage':
