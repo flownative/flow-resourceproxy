@@ -41,11 +41,6 @@ class ResourceImportAspect
      */
     protected array $storagesSettings = [];
 
-    /**
-     * @Flow\InjectConfiguration(path="resource.storages", package="Neos.Flow")
-     */
-    protected array $flowStoragesSettings = [];
-
     public function initializeObject(): void
     {
         $this->browser = new Browser();
