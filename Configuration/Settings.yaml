@@ -1,0 +1,4 @@
+Flownative:
+  Flow:
+    ResourceProxy:
+      storages: []

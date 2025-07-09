@@ -41,11 +41,6 @@ class ResourceImportAspect
      */
     protected array $storagesSettings = [];
 
-    /**
-     * @Flow\InjectConfiguration(path="resource.storages", package="Neos.Flow")
-     */
-    protected array $flowStoragesSettings = [];
-
     public function initializeObject(): void
     {
         $this->browser = new Browser();
@@ -126,17 +121,15 @@ class ResourceImportAspect
 
     private function importRemoteResource(PersistentResource $resource, WritableStorageInterface $storage): void
     {
-        if ($storage instanceof WritableFileSystemStorage) {
-            $pathAndFilename = $this->getStoragePathAndFilename($resource->getSha1(), $storage);
+        if ($storage instanceof WritableStorageInterface) {
             $content = $this->getRemoteResource($resource, $storage);
             if ($content === false) {
                 $this->logger->notice(sprintf('Could not fetch resource data for "%s".', $resource->getSha1()), LogEnvironment::fromMethodName(__METHOD__));
                 return;
             }
 
-            Files::createDirectoryRecursively(dirname($pathAndFilename));
-            file_put_contents($pathAndFilename, $content);
-            $this->logger->notice(sprintf('Stored resource data at "%s".', $pathAndFilename), LogEnvironment::fromMethodName(__METHOD__));
+            $storage->importResourceFromContent($content, $resource->getCollectionName());
+            $this->logger->notice(sprintf('Imported resource data "%s" (%s) into storage "%s"', $resource->getFilename(), $resource->getSha1(), $storage->getName()), LogEnvironment::fromMethodName(__METHOD__));
         } else {
             $this->logger->notice(sprintf('The type of storage "%s" is not supported. Skipping fetching & importing.', $storage->getName()), LogEnvironment::fromMethodName(__METHOD__));
         }
@@ -196,20 +189,5 @@ class ResourceImportAspect
     private function encodeRelativePathAndFilenameForUri(string $relativePathAndFilename): string
     {
         return implode('/', array_map('rawurlencode', explode('/', $relativePathAndFilename)));
-    }
-
-    /**
-     * Determines and returns the absolute path and filename for a storage file identified by the given SHA1 hash.
-     *
-     * This function assures a nested directory structure in order to avoid thousands of files in a single directory
-     * which may result in performance problems in older file systems such as ext2, ext3 or NTFS.
-     *
-     * @param string $sha1Hash The SHA1 hash identifying the stored resource
-     * @return string The path and filename, for example "/var/www/mysite.com/Data/Persistent/c/8/2/8/c828d0f88ce197be1aff7cc2e5e86b1244241ac6"
-     */
-    protected function getStoragePathAndFilename(string $sha1Hash, WritableFileSystemStorage $storage): string
-    {
-        $path = $this->flowStoragesSettings[$storage->getName()]['storageOptions']['path'];
-        return $path . $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash;
     }
 }
