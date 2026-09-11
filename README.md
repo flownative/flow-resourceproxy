@@ -54,6 +54,10 @@ clearing the existing thumbnails will force the system to re-generate them.
 If things don't work as expected, check the system log, the package is pretty
 talkative in the debug log level.
 
+Fetched data is only imported if its SHA1 matches the one of the resource. If
+the remote source delivers different data (e.g. because files were optimized
+or replaced there), a warning is logged and the resource remains missing.
+
 ## Implementation
 
 In Flow, resource access is handled through the resource management API. These
@@ -78,4 +82,5 @@ is fetched using the `TargetInterface.getPublicPersistentResourceUri` method.
 This package thus advises the `StorageInterface` and `TargetInterface` to
 check for missing resources and tries to "import" them as needed.
 
-Note: So far this  only works for the `WritableFileSystemStorage`.
+Missing resources are imported using the `WritableStorageInterface` API, so this
+works for all writable storages.
