@@ -11,9 +11,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
-use Neos\Flow\ResourceManagement\Storage\WritableFileSystemStorage;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
-use Neos\Utility\Files;
 use Psr\Log\LoggerInterface;
 
 /**
