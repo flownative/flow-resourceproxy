@@ -48,6 +48,10 @@ class ResourceImportAspect
 
     public function initializeObject(): void
     {
+        if ($this->storagesSettings === []) {
+            return;
+        }
+
         $this->browser = new Browser();
         $this->browser->setRequestEngine(new CurlEngine());
     }
@@ -60,7 +64,7 @@ class ResourceImportAspect
     public function importOnGetStreamByResource(JoinPointInterface $joinPoint)
     {
         $stream = $joinPoint->getAdviceChain()->proceed($joinPoint);
-        if ($stream !== false) {
+        if ($stream !== false || $this->storagesSettings === []) {
             return $stream;
         }
 
@@ -97,6 +101,10 @@ class ResourceImportAspect
      */
     public function importOnGetPublicPersistentResourceUri(JoinPointInterface $joinPoint): string
     {
+        if ($this->storagesSettings === []) {
+            return $joinPoint->getAdviceChain()->proceed($joinPoint);
+        }
+
         /** @var PersistentResource $resource */
         $resource = $joinPoint->getMethodArgument('resource');
         $collectionName = $resource->getCollectionName();
