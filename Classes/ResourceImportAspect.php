@@ -54,8 +54,12 @@ class ResourceImportAspect
      */
     public function importOnGetStreamByResource(JoinPointInterface $joinPoint)
     {
+        if ($this->storagesSettings === [] || $this->isAdvisedInParentClass($joinPoint)) {
+            return $joinPoint->getAdviceChain()->proceed($joinPoint);
+        }
+
         $stream = $joinPoint->getAdviceChain()->proceed($joinPoint);
-        if ($stream !== false || $this->storagesSettings === []) {
+        if ($stream !== false) {
             return $stream;
         }
 
@@ -90,7 +94,7 @@ class ResourceImportAspect
      */
     public function importOnGetPublicPersistentResourceUri(JoinPointInterface $joinPoint): string
     {
-        if ($this->storagesSettings === []) {
+        if ($this->storagesSettings === [] || $this->isAdvisedInParentClass($joinPoint)) {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
         }
 
@@ -115,6 +119,16 @@ class ResourceImportAspect
         }
 
         return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    /**
+     * Flow creates an AOP proxy for every class in a hierarchy (e.g. WritableFileSystemStorage and its parent
+     * FileSystemStorage). As the "advice mode" flag is private to each proxy class, the advices run once per
+     * proxy. Only the proxy of the object's actual class should act, the others just proceed.
+     */
+    private function isAdvisedInParentClass(JoinPointInterface $joinPoint): bool
+    {
+        return $joinPoint->getClassName() !== get_class($joinPoint->getProxy());
     }
 
     private function importRemoteResource(PersistentResource $resource, WritableStorageInterface $storage): bool
