@@ -20,24 +20,16 @@ use Psr\Log\LoggerInterface;
  */
 class ResourceImportAspect
 {
-    /**
-     * @Flow\Inject
-     * @var ResourceManager
-     */
-    protected $resourceManager;
+    #[Flow\Inject]
+    protected ResourceManager $resourceManager;
 
-    /**
-     * @Flow\Inject
-     * @var LoggerInterface
-     */
-    protected $logger;
+    #[Flow\Inject]
+    protected LoggerInterface $logger;
+
+    #[Flow\InjectConfiguration(path: "storages", package: "Flownative.Flow.ResourceProxy")]
+    protected array $storagesSettings = [];
 
     protected Browser $browser;
-
-    /**
-     * @Flow\InjectConfiguration(path="storages", package="Flownative.Flow.ResourceProxy")
-     */
-    protected array $storagesSettings = [];
 
     /**
      * Imports that failed during this request, keyed by storage name and SHA1, to avoid fetching them again
@@ -58,7 +50,6 @@ class ResourceImportAspect
 
     /**
      * @Flow\Around("within(Neos\Flow\ResourceManagement\Storage\StorageInterface) && method(.*->getStreamByResource())")
-     * @param JoinPointInterface $joinPoint The current join point
      * @return resource|boolean The resource stream or false if the stream could not be obtained
      */
     public function importOnGetStreamByResource(JoinPointInterface $joinPoint)
@@ -96,8 +87,6 @@ class ResourceImportAspect
      * need to check for that file here and "import" it if it is not available.
      *
      * @Flow\Around("within(Neos\Flow\ResourceManagement\Target\TargetInterface) && method(.*->getPublicPersistentResourceUri())")
-     * @param JoinPointInterface $joinPoint The current join point
-     * @return string
      */
     public function importOnGetPublicPersistentResourceUri(JoinPointInterface $joinPoint): string
     {
@@ -189,16 +178,6 @@ class ResourceImportAspect
         return $response->getBody()->getContents();
     }
 
-    /**
-     * Determines and returns the relative path and filename for the given Storage Object or PersistentResource. If the given
-     * object represents a persistent resource, its own relative publication path will be empty. If the given object
-     * represents a static resources, it will contain a relative path.
-     *
-     * @param PersistentResource $resource
-     * @param bool $subdivideHashPathSegment
-     * @return string The relative path and filename, for example "c/8/2/8/c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if subdivideHashPathSegment is on) or
-     *     "c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if it's off)
-     */
     private function getRelativePublicationPathAndFilename(PersistentResource $resource, bool $subdivideHashPathSegment): string
     {
         if ($resource->getRelativePublicationPath() !== '') {
@@ -212,9 +191,6 @@ class ResourceImportAspect
         return $pathAndFilename;
     }
 
-    /**
-     * Applies rawurlencode() to all path segments of the given $relativePathAndFilename
-     */
     private function encodeRelativePathAndFilenameForUri(string $relativePathAndFilename): string
     {
         return implode('/', array_map('rawurlencode', explode('/', $relativePathAndFilename)));
